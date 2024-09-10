@@ -42,10 +42,11 @@ unfocused_count = 0
 total_frames = 0
 
 # Define file paths
-csv_filename = 'F:/Projects ML/Attentive Yawn Detection/report.csv'
-chart_filename = 'F:/Projects ML/Attentive Yawn Detection/report_chart.png'
+csv_filename = 'F:\Projects ML\Attentive Yawn Detection\report.csv'
+bar_chart_filename = 'F:\Projects ML\Attentive Yawn Detection\bar_chart.png'
+pie_chart_filename = 'F:\Projects ML\Attentive Yawn Detection\pie_chart.png'
 
-# Function to update CSV and bar chart
+# Function to update CSV and plots
 def update_report():
     # Calculate percentages
     if total_frames > 0:
@@ -60,7 +61,6 @@ def update_report():
     # Prepare data for CSV
     data = {
         'State': ['Attentive', 'Not Attentive', 'Yawning'],
-        'Total Time Occurred': [focused_count, unfocused_count, yawning_count],
         'Percentage': [f'{percentage_focused:.2f}%', f'{percentage_unfocused:.2f}%', f'{percentage_yawning:.2f}%']
     }
 
@@ -70,16 +70,26 @@ def update_report():
         df.to_csv(csv_filename, index=False)
         print(f"CSV file saved as {csv_filename}")
 
-        # Generate and save a bar chart
+        # Bar chart
         plt.figure(figsize=(10, 6))
-        plt.bar(df['State'], df['Total Time Occurred'], color=['green', 'blue', 'red'])
+        plt.bar(df['State'], [percentage_focused, percentage_unfocused, percentage_yawning], color=['green', 'blue', 'red'])
         plt.xlabel('State')
-        plt.ylabel('Total Time Occurred')
-        plt.title('Occurrences of Focused, Unfocused, and Yawning States')
+        plt.ylabel('Percentage')
+        plt.title('Percentage of Attentive, Not Attentive, and Yawning States')
         plt.tight_layout()
-        plt.savefig(chart_filename)
+        plt.savefig(bar_chart_filename)
         plt.close()
-        print(f"Chart saved as {chart_filename}")
+        print(f"Bar chart saved as {bar_chart_filename}")
+
+        # Pie chart
+        plt.figure(figsize=(8, 8))
+        plt.pie([percentage_focused, percentage_unfocused, percentage_yawning], 
+                labels=df['State'], autopct='%1.1f%%', colors=['green', 'blue', 'red'], startangle=140)
+        plt.title('Distribution of Attentive, Not Attentive, and Yawning States')
+        plt.axis('equal')
+        plt.savefig(pie_chart_filename)
+        plt.close()
+        print(f"Pie chart saved as {pie_chart_filename}")
 
     except Exception as e:
         print(f"An error occurred while saving files: {e}")
