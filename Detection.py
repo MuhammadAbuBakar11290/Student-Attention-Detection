@@ -42,7 +42,7 @@ unfocused_count = 0
 total_frames = 0
 
 # Define file paths
-csv_filename = 'F:/Projects ML/Attentive Detection/report.csv'
+csv_filename = 'F:/Projects ML/Attentive  Detection/report.csv'
 chart_filename = 'F:/Projects ML/Attentive Detection/report_chart.png'
 
 # Initialize CSV file
