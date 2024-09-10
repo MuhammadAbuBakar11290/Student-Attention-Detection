@@ -42,8 +42,47 @@ unfocused_count = 0
 total_frames = 0
 
 # Define file paths
-csv_filename = 'F:/Projects ML/Attentive Detection/report.csv'
-chart_filename = 'F:/Projects ML/Attentive Detection/report_chart.png'
+csv_filename = 'F:/Projects ML/Attentive Yawn Detection/report.csv'
+chart_filename = 'F:/Projects ML/Attentive Yawn Detection/report_chart.png'
+
+# Function to update CSV and bar chart
+def update_report():
+    # Calculate percentages
+    if total_frames > 0:
+        percentage_yawning = (yawning_count / total_frames) * 100
+        percentage_focused = (focused_count / total_frames) * 100
+        percentage_unfocused = (unfocused_count / total_frames) * 100
+    else:
+        percentage_yawning = 0
+        percentage_focused = 0
+        percentage_unfocused = 0
+
+    # Prepare data for CSV
+    data = {
+        'State': ['Attentive', 'Not Attentive', 'Yawning'],
+        'Total Time Occurred': [focused_count, unfocused_count, yawning_count],
+        'Percentage': [f'{percentage_focused:.2f}%', f'{percentage_unfocused:.2f}%', f'{percentage_yawning:.2f}%']
+    }
+
+    try:
+        # Save results to CSV
+        df = pd.DataFrame(data)
+        df.to_csv(csv_filename, index=False)
+        print(f"CSV file saved as {csv_filename}")
+
+        # Generate and save a bar chart
+        plt.figure(figsize=(10, 6))
+        plt.bar(df['State'], df['Total Time Occurred'], color=['green', 'blue', 'red'])
+        plt.xlabel('State')
+        plt.ylabel('Total Time Occurred')
+        plt.title('Occurrences of Focused, Unfocused, and Yawning States')
+        plt.tight_layout()
+        plt.savefig(chart_filename)
+        plt.close()
+        print(f"Chart saved as {chart_filename}")
+
+    except Exception as e:
+        print(f"An error occurred while saving files: {e}")
 
 try:
     # Real-time detection loop
@@ -88,6 +127,9 @@ try:
         cv2.resizeWindow('Real-time Attentiveness and Yawn Detection', 800, 600)
         cv2.imshow('Real-time Attentiveness and Yawn Detection', frame)
         
+        # Update report after every frame
+        update_report()
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
@@ -98,40 +140,3 @@ finally:
     # Release resources
     cap.release()
     cv2.destroyAllWindows()
-
-    # Calculate percentages
-    if total_frames > 0:
-        percentage_yawning = (yawning_count / total_frames) * 100
-        percentage_focused = (focused_count / total_frames) * 100
-        percentage_unfocused = (unfocused_count / total_frames) * 100
-    else:
-        percentage_yawning = 0
-        percentage_focused = 0
-        percentage_unfocused = 0
-
-    # Prepare data for CSV
-    data = {
-        'State': ['Attentive', 'Not Attentive', 'Yawning'],
-        'Total Time Occurred': [focused_count, unfocused_count, yawning_count],
-        'Percentage': [f'{percentage_focused:.2f}%', f'{percentage_unfocused:.2f}%', f'{percentage_yawning:.2f}%']
-    }
-
-    try:
-        # Save results to CSV
-        df = pd.DataFrame(data)
-        df.to_csv(csv_filename, index=False)
-        print(f"CSV file saved as {csv_filename}")
-
-        # Generate and save a bar chart
-        plt.figure(figsize=(10, 6))
-        plt.bar(df['State'], df['Total Time Occurred'], color=['green', 'blue', 'red'])
-        plt.xlabel('State')
-        plt.ylabel('Total Time Occurred')
-        plt.title('Occurrences of Focused, Unfocused, and Yawning States')
-        plt.tight_layout()
-        plt.savefig(chart_filename)
-        plt.close()
-        print(f"Chart saved as {chart_filename}")
-
-    except Exception as e:
-        print(f"An error occurred while saving files: {e}")
